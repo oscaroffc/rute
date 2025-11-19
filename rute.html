@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Rute Kapal Pelni</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            max-width: 950px;
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 12px;
+        }
+
+        .header h2 {
+            color: #5a5a5a;
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .slider-line {
+            flex: 1;
+            height: 2px;
+            background: #d0d0d0;
+            position: relative;
+        }
+
+        .slider-dot {
+            width: 18px;
+            height: 18px;
+            background: #ff6b35;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .date-time-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            gap: 20px;
+        }
+
+        .date-time-box {
+            flex: 1;
+        }
+
+        .date-label {
+            color: #3b9dd8;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .time-label {
+            color: #7a7a7a;
+            font-size: 34px;
+            font-weight: 600;
+        }
+
+        .transit-info {
+            text-align: center;
+            color: #7a7a7a;
+            font-size: 22px;
+            align-self: center;
+        }
+
+        .route-label {
+            color: #5a5a5a;
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .route-stops {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .route-stop {
+            background: #ff6b35;
+            color: white;
+            padding: 11px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .ship-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f5f5f5;
+            padding: 14px 18px;
+            border-radius: 10px;
+        }
+
+        .ship-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .ship-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .ship-name {
+            background: #3b9dd8;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .ship-duration {
+            color: #5a5a5a;
+            font-size: 20px;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+
+        .ship-price {
+            color: #ff6b35;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .form-section {
+            background: #f9f9f9;
+            padding: 24px;
+            border-radius: 14px;
+            margin-top: 28px;
+        }
+
+        .form-title {
+            color: #5a5a5a;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            color: #5a5a5a;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #3b9dd8;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .btn-generate {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-generate:active {
+            transform: translateY(0);
+        }
+
+        .preview-section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .preview-title {
+            color: #5a5a5a;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        #preview {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>PANTOLOAN</h2>
+            <div class="slider-line">
+                <div class="slider-dot"></div>
+            </div>
+            <h2>SURABAYA</h2>
+        </div>
+
+        <div class="date-time-section">
+            <div class="date-time-box">
+                <div class="date-label">Sel, 28 Okt 2025</div>
+                <div class="time-label">10:00</div>
+            </div>
+            <div class="transit-info">1× Transit</div>
+            <div class="date-time-box" style="text-align: right;">
+                <div class="date-label">Kam, 30 Okt 2025</div>
+                <div class="time-label">04:00</div>
+            </div>
+        </div>
+
+        <div class="route-label">Rute Transit :</div>
+        <div class="route-stops">
+            <div class="route-stop">PANTOLOAN, KOTA PALU...</div>
+            <div class="route-stop">BALIKPAPAN, KOTA BAL...</div>
+            <div class="route-stop">SURABAYA, KOTA SURAB...</div>
+        </div>
+
+        <div class="ship-info">
+            <div class="ship-left">
+                <div class="ship-name">KM.DOROLONDA</div>
+                <div class="ship-duration">1 hari 18 jam</div>
+            </div>
+            <div class="ship-price">Rp569<br>.000</div>
+        </div>
+
+        <div class="form-section">
+            <h3 class="form-title">🚢 Generate Rute Kapal Pelni</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Pelabuhan Asal</label>
+                    <input type="text" class="form-input" id="portFrom" placeholder="Contoh: PANTOLOAN">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pelabuhan Tujuan</label>
+                    <input type="text" class="form-input" id="portTo" placeholder="Contoh: SURABAYA">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Tanggal Berangkat</label>
+                    <input type="text" class="form-input" id="departDate" placeholder="Contoh: Sel, 28 Okt 2025">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Waktu Berangkat</label>
+                    <input type="text" class="form-input" id="departTime" placeholder="Contoh: 10:00">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Tanggal Tiba</label>
+                    <input type="text" class="form-input" id="arriveDate" placeholder="Contoh: Kam, 30 Okt 2025">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Waktu Tiba</label>
+                    <input type="text" class="form-input" id="arriveTime" placeholder="Contoh: 04:00">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Jumlah Transit</label>
+                <input type="number" class="form-input" id="transitCount" min="0" value="1">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Rute Transit (pisahkan dengan enter)</label>
+                <textarea class="form-input" id="routeStops" rows="3" placeholder="PANTOLOAN, KOTA PALU...&#10;BALIKPAPAN, KOTA BAL...&#10;SURABAYA, KOTA SURAB..."></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Nama Kapal</label>
+                    <input type="text" class="form-input" id="shipName" placeholder="Contoh: KM.DOROLONDA">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Durasi Perjalanan</label>
+                    <input type="text" class="form-input" id="duration" placeholder="Contoh: 1 hari 18 jam">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Harga Tiket (Rp)</label>
+                <input type="text" class="form-input" id="price" placeholder="Contoh: 569000">
+            </div>
+
+            <button class="btn-generate" onclick="generateRoute()">✨ Generate Rute</button>
+        </div>
+
+        <div class="preview-section" id="preview">
+            <h3 class="preview-title">Preview Rute</h3>
+            <div id="previewContent"></div>
+        </div>
+    </div>
+
+    <script>
+        function generateRoute() {
+            const portFrom = document.getElementById('portFrom').value || 'PANTOLOAN';
+            const portTo = document.getElementById('portTo').value || 'SURABAYA';
+            const departDate = document.getElementById('departDate').value || 'Sel, 28 Okt 2025';
+            const departTime = document.getElementById('departTime').value || '10:00';
+            const arriveDate = document.getElementById('arriveDate').value || 'Kam, 30 Okt 2025';
+            const arriveTime = document.getElementById('arriveTime').value || '04:00';
+            const transitCount = document.getElementById('transitCount').value || '1';
+            const routeStops = document.getElementById('routeStops').value || 'PANTOLOAN, KOTA PALU...\nBALIKPAPAN, KOTA BAL...\nSURABAYA, KOTA SURAB...';
+            const shipName = document.getElementById('shipName').value || 'KM.DOROLONDA';
+            const duration = document.getElementById('duration').value || '1 hari 18 jam';
+            const price = document.getElementById('price').value || '569000';
+
+            const stops = routeStops.split('\n').filter(s => s.trim());
+            const formattedPrice = parseInt(price.replace(/\D/g, '')).toLocaleString('id-ID');
+
+            const html = `
+                <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
+                    <div class="header">
+                        <h2>${portFrom}</h2>
+                        <div class="slider-line">
+                            <div class="slider-dot"></div>
+                        </div>
+                        <h2>${portTo}</h2>
+                    </div>
+
+                    <div class="date-time-section">
+                        <div class="date-time-box">
+                            <div class="date-label">${departDate}</div>
+                            <div class="time-label">${departTime}</div>
+                        </div>
+                        <div class="transit-info">${transitCount}× Transit</div>
+                        <div class="date-time-box" style="text-align: right;">
+                            <div class="date-label">${arriveDate}</div>
+                            <div class="time-label">${arriveTime}</div>
+                        </div>
+                    </div>
+
+                    <div class="route-label">Rute Transit :</div>
+                    <div class="route-stops">
+                        ${stops.map(stop => `<div class="route-stop">${stop}</div>`).join('')}
+                    </div>
+
+                    <div class="ship-info">
+                        <div class="ship-left">
+                            <div class="ship-icon">▶</div>
+                            <div class="ship-name">${shipName}</div>
+                            <div class="ship-duration">${duration}</div>
+                        </div>
+                        <div class="ship-price">Rp${formattedPrice}</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('previewContent').innerHTML = html;
+            document.getElementById('preview').style.display = 'block';
+            document.getElementById('preview').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
